@@ -1,101 +1,115 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div style={{
+      background: "linear-gradient(to bottom right, #6a0dad, #1e90ff)",
+      fontFamily: "'Comic Sans MS', 'Segoe UI', sans-serif",
+      color: "white",
+      margin: 0,
+      padding: 0,
+      minHeight: "100vh"
+    }}>
+      <header style={{
+        background: "rgba(0, 0, 0, 0.2)",
+        padding: "2rem",
+        textAlign: "center",
+        borderBottom: "3px solid white"
+      }}>
+        <h1 style={{ fontSize: "3rem", margin: 0, letterSpacing: "2px" }}>CodeQuest</h1>
+        <p style={{ fontSize: "1.2rem", marginTop: "0.5rem" }}>
+          An epic journey where you level up through coding challenges!
+        </p>
+        <nav style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "2rem",
+          marginTop: "1rem"
+        }}>
+          <a href="#about" style={linkStyle}>About</a>
+          <a href="#features" style={linkStyle}>Features</a>
+          <a href="#screenshots" style={linkStyle}>Screenshots</a>
+        </nav>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <section id="about" style={sectionStyle}>
+        <h2>About the Game</h2>
+        <p>
+          CodeQuest is a colorful adventure game that teaches you how to code while exploring magical worlds.
+          Solve puzzles, write code, and defeat bugs!
+        </p>
+      </section>
+
+      <section id="features" style={sectionStyle}>
+        <h2>Game Features</h2>
+        <div style={featuresGrid}>
+          {[
+            { icon: "🧩", title: "Puzzles", text: "Learn logic and syntax by solving fun and tricky challenges." },
+            { icon: "🎮", title: "Gameplay", text: "Play as a coding wizard and fix the broken digital world!" },
+            { icon: "📚", title: "Learn", text: "Interactive tutorials in Python, JavaScript, and more." }
+          ].map((f, i) => (
+            <div key={i} style={featureBox}>
+              <h3>{f.icon} {f.title}</h3>
+              <p>{f.text}</p>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      <section id="screenshots" style={sectionStyle}>
+        <h2>Game Screenshots</h2>
+        <img
+          src="https://via.placeholder.com/400x250.png?text=Level+1:+Bug+Forest"
+          alt="Screenshot 1"
+          style={imgStyle}
+        />
+        <img
+          src="https://via.placeholder.com/400x250.png?text=Code+Editor+Scene"
+          alt="Screenshot 2"
+          style={imgStyle}
+        />
+      </section>
+
+      <footer style={{
+        background: "rgba(0, 0, 0, 0.3)",
+        textAlign: "center",
+        padding: "1rem",
+        fontSize: "0.9rem"
+      }}>
+        <p>© 2025 CodeQuest. All rights reserved. | Made with 💙 and ☕</p>
       </footer>
     </div>
   );
 }
+
+const linkStyle = {
+  color: "#fff",
+  textDecoration: "none",
+  fontWeight: "bold",
+  transition: "color 0.3s ease",
+};
+
+const sectionStyle = {
+  padding: "3rem 2rem",
+  textAlign: "center" as const,
+};
+
+const featuresGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+  gap: "2rem",
+  marginTop: "2rem",
+};
+
+const featureBox = {
+  background: "rgba(255, 255, 255, 0.1)",
+  padding: "1.5rem",
+  borderRadius: "15px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+};
+
+const imgStyle = {
+  width: "90%",
+  maxWidth: "400px",
+  borderRadius: "10px",
+  boxShadow: "0 0 20px rgba(255, 255, 255, 0.2)",
+  margin: "1rem 0",
+};
