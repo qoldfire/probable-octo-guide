@@ -8,13 +8,16 @@ export default function HomePage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
+        html {
+          scroll-behavior: smooth;
+        }
+
         body {
           margin: 0;
           padding: 0;
           font-family: 'Poppins', sans-serif;
           background: linear-gradient(135deg, #6a0dad, #1e90ff);
           color: white;
-          scroll-behavior: smooth;
         }
 
         a {
@@ -104,6 +107,7 @@ export default function HomePage() {
           </nav>
         </header>
 
+        {/* ABOUT SECTION */}
         <section id="about" style={{
           padding: "4rem 1rem",
           textAlign: "center"
@@ -114,6 +118,7 @@ export default function HomePage() {
           </p>
         </section>
 
+        {/* FEATURES SECTION */}
         <section id="features" style={{ padding: "4rem 1rem" }}>
           <h2 style={{ textAlign: "center", fontSize: "2.2rem", marginBottom: "2rem", color: "#aff8db" }}>Game Features</h2>
           <div style={{
@@ -135,6 +140,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* SCREENSHOTS SECTION */}
         <section id="screenshots" style={{ padding: "4rem 1rem", textAlign: "center" }}>
           <h2 style={{ fontSize: "2.2rem", color: "#f0aaff", marginBottom: "2rem" }}>Game Screenshots</h2>
           <div style={{
@@ -154,6 +160,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FOOTER */}
         <footer>
           <p>© 2025 CodeQuest. Built with 💙 by Dev Explorers.</p>
         </footer>
