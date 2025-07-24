@@ -1,161 +1,141 @@
-import { Fragment } from "react";
+'use client';
 
-export default function HomePage() {
+import { useState } from 'react';
+
+export default function GamePage() {
+  const [step, setStep] = useState<'intro' | 'challenge' | 'complete'>('intro');
+  const [inputValue, setInputValue] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [score, setScore] = useState(0);
+
+  const challenges = [
+    {
+      instruction: 'Type the word "HTML" inside a paragraph.',
+      tip: 'Use <p> to define a paragraph. It wraps your text and displays it on the page, like <p>HTML</p>.',
+      placeholder: '<p>HTML</p>',
+      check: (input: string) => /<p>\s*html\s*<\/p>/i.test(input)
+    },
+    {
+      instruction: 'Show the word "Welcome" as a heading.',
+      tip: 'Use <h1> for big headings, like <h1>Welcome</h1>.',
+      placeholder: '<h1>Welcome</h1>',
+      check: (input: string) => /<h1>\s*welcome\s*<\/h1>/i.test(input)
+    },
+    {
+      instruction: 'Make a link that says "Go" and points to https://example.com.',
+      tip: 'Use <a> to create a link. Add href="URL" to set the destination, and put the visible text between the tags, like <a href="https://example.com">Go</a>.',
+      placeholder: '<a href="https://example.com">Go</a>',
+      check: (input: string) => /<a\s+href=["']https:\/\/example\.com["']\s*>\s*go\s*<\/a>/i.test(input)
+    }
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const current = challenges[currentIndex];
+
+  const handleSubmit = () => {
+    if (current.check(inputValue.trim())) {
+      setScore(score + 1);
+      setFeedback('✅ Great job!');
+    } else {
+      setFeedback('❌ Oops! Tip: ' + current.tip);
+      return;
+    }
+
+    setTimeout(() => {
+      setFeedback('');
+      setInputValue('');
+      if (currentIndex + 1 < challenges.length) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setStep('complete');
+      }
+    }, 1200);
+  };
+
   return (
-    <Fragment>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+    <div className="wrapper" style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#cce6ff' }}>
+        🌐 Learn HTML by Playing!
+      </h1>
+      <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#eef' }}>
+        This mini-game is part of CodeQuest — a colorful adventure that helps you learn web development step-by-step.
+      </p>
 
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: 'Poppins', sans-serif;
-          background: linear-gradient(135deg, #6a0dad, #1e90ff);
-          color: white;
-          scroll-behavior: smooth;
-        }
-
-        a {
-          color: white;
-          text-decoration: none;
-        }
-
-        a:hover {
-          color: #ffcbf2;
-        }
-
-        h1, h2, h3 {
-          margin: 0;
-        }
-
-        img {
-          max-width: 100%;
-          height: auto;
-        }
-
-        .wrapper {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 1rem;
-        }
-
-        .feature-box {
-          background: rgba(255, 255, 255, 0.12);
-          border-radius: 20px;
-          padding: 1.5rem;
-          transition: transform 0.3s ease, background 0.3s ease;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        .feature-box:hover {
-          transform: scale(1.05);
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        footer {
-          background: rgba(0, 0, 0, 0.3);
-          text-align: center;
-          padding: 1rem;
-          font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-          .hero h1 {
-            font-size: 2.2rem;
-          }
-
-          nav {
-            flex-direction: column;
-            gap: 1rem;
-          }
-        }
-      `}</style>
-
-      <div className="wrapper">
-        <header className="hero" style={{
-          textAlign: "center",
-          padding: "3rem 1rem",
-          borderBottom: "3px solid rgba(255, 255, 255, 0.4)",
-        }}>
-          <h1 style={{
-            fontSize: "3rem",
-            fontWeight: 800,
-            background: "linear-gradient(to right, #ffd700, #00ffff)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent"
-          }}>
-            CodeQuest
-          </h1>
-          <p style={{ fontSize: "1.25rem", color: "#ffefff", marginTop: "0.5rem" }}>
-            Level up your mind with every line of code!
+      {step === 'intro' && (
+        <div>
+          <p style={{ fontSize: '1.2rem' }}>
+            Practice writing simple HTML code. It's interactive, beginner-friendly, and fun!
           </p>
-          <nav style={{
-            marginTop: "1.5rem",
-            display: "flex",
-            justifyContent: "center",
-            gap: "2rem",
-            flexWrap: "wrap"
-          }}>
-            <a href="#about">About</a>
-            <a href="#features">Features</a>
-            <a href="#screenshots">Screenshots</a>
-          </nav>
-        </header>
+          <button onClick={() => setStep('challenge')} style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '10px',
+            background: '#6c5ce7',
+            color: '#fff',
+            fontSize: '1rem',
+            cursor: 'pointer'
+          }}>Start Learning</button>
+        </div>
+      )}
 
-        <section id="about" style={{
-          padding: "4rem 1rem",
-          textAlign: "center"
+      {step === 'challenge' && (
+        <div style={{
+          background: 'rgba(0,0,50,0.3)',
+          padding: '1.5rem',
+          borderRadius: '15px',
+          maxWidth: '700px',
+          margin: '0 auto',
+          boxShadow: '0 0 15px rgba(0,0,0,0.5)'
         }}>
-          <h2 style={{ fontSize: "2.2rem", marginBottom: "1rem", color: "#ffd6ff" }}>About the Game</h2>
-          <p style={{ maxWidth: "700px", margin: "0 auto", fontSize: "1.1rem", color: "#f0f8ff" }}>
-            CodeQuest is a vibrant journey where you solve puzzles, defeat bugs, and unlock powers through real programming. Perfect for beginners and pros alike!
-          </p>
-        </section>
+          <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>{current.instruction}</p>
+          <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#aaf' }}>💡 Tip: {current.tip}</p>
+          <textarea
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            rows={2}
+            placeholder={current.placeholder}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              borderRadius: '10px',
+              border: '1px solid #888',
+              fontSize: '1rem',
+              fontFamily: 'monospace'
+            }}
+          />
+          <br />
+          <button onClick={handleSubmit} style={{
+            marginTop: '1rem',
+            padding: '0.5rem 1.25rem',
+            borderRadius: '10px',
+            background: 'linear-gradient(to right, #00c6ff, #8e2de2)',
+            color: 'white',
+            fontSize: '1rem',
+            cursor: 'pointer'
+          }}>Submit</button>
+          <p style={{ marginTop: '1rem', fontWeight: 'bold' }}>{feedback}</p>
+        </div>
+      )}
 
-        <section id="features" style={{ padding: "4rem 1rem" }}>
-          <h2 style={{ textAlign: "center", fontSize: "2.2rem", marginBottom: "2rem", color: "#aff8db" }}>Game Features</h2>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "2rem"
-          }}>
-            {[
-              { emoji: "🧩", title: "Challenging Puzzles", text: "Boost your brain power with logical challenges that teach real code." },
-              { emoji: "🎨", title: "Colorful Worlds", text: "Explore vibrant environments styled like digital dreamscapes." },
-              { emoji: "🚀", title: "Skill Progression", text: "Level up through Python, JavaScript, and more while earning rewards." },
-              { emoji: "🌐", title: "Global Leaderboard", text: "Compete with coders around the world to become a CodeMaster!" }
-            ].map((feature, index) => (
-              <div key={index} className="feature-box">
-                <h3 style={{ fontSize: "1.4rem", marginBottom: "0.5rem" }}>{feature.emoji} {feature.title}</h3>
-                <p style={{ fontSize: "1rem", color: "#e0f7ff" }}>{feature.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="screenshots" style={{ padding: "4rem 1rem", textAlign: "center" }}>
-          <h2 style={{ fontSize: "2.2rem", color: "#f0aaff", marginBottom: "2rem" }}>Game Screenshots</h2>
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "1.5rem",
-            justifyContent: "center"
-          }}>
-            <img src="https://via.placeholder.com/400x250.png?text=Level+1:+Bug+Forest" alt="Bug Forest" style={{
-              borderRadius: "15px",
-              boxShadow: "0 0 20px rgba(255, 255, 255, 0.4)"
-            }} />
-            <img src="https://via.placeholder.com/400x250.png?text=Code+Battle+Arena" alt="Code Arena" style={{
-              borderRadius: "15px",
-              boxShadow: "0 0 20px rgba(255, 255, 255, 0.4)"
-            }} />
-          </div>
-        </section>
-
-        <footer>
-          <p>© 2025 CodeQuest. Built with 💙 by Dev Explorers.</p>
-        </footer>
-      </div>
-    </Fragment>
+      {step === 'complete' && (
+        <div>
+          <p style={{ fontSize: '1.2rem' }}>🎉 You did it!</p>
+          <p>Your score: {score} / {challenges.length}</p>
+          <button onClick={() => {
+            setScore(0);
+            setCurrentIndex(0);
+            setStep('challenge');
+          }} style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '10px',
+            background: '#8a2be2',
+            color: '#fff',
+            fontSize: '1rem',
+            cursor: 'pointer'
+          }}>Play Again</button>
+        </div>
+      )}
+    </div>
   );
 }
