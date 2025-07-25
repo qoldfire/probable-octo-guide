@@ -11,23 +11,23 @@ export default function GamePage() {
   const challenges = [
     {
       instruction: 'Type the word "HTML" inside a paragraph.',
-      tip: 'A paragraph element is used for general blocks of text.',
-      failTip: 'Try wrapping the word with an element that shows paragraphs.',
-      placeholder: '<p>HTML</p>',
+      tip: 'A paragraph is made using the <p> element. It wraps blocks of text.',
+      failTip: 'Try wrapping the word using the paragraph element with angle brackets.',
+      placeholder: 'Type your HTML here...',
       check: (input: string) => /<p>\s*html\s*<\/p>/i.test(input)
     },
     {
       instruction: 'Show the word "Welcome" as a heading.',
-      tip: 'Headings help define sections with titles and come in different levels.',
-      failTip: 'Use a level one heading element to highlight important titles.',
-      placeholder: '<h1>Welcome</h1>',
+      tip: 'Headings are created using <h1> to <h6> depending on importance.',
+      failTip: 'Use the <h1> tag to make a main heading.',
+      placeholder: 'Type your HTML here...',
       check: (input: string) => /<h1>\s*welcome\s*<\/h1>/i.test(input)
     },
     {
       instruction: 'Make a link that says "Go" and points to https://example.com.',
-      tip: 'Links connect pages using a tag with a destination URL.',
-      failTip: 'Use an anchor element and set its destination with the right attribute.',
-      placeholder: '<a href="https://example.com">Go</a>',
+      tip: 'Links use the <a> tag with an href attribute to set the destination.',
+      failTip: 'Try using <a href="...">text</a> for the link.',
+      placeholder: 'Type your HTML here...',
       check: (input: string) => /<a\s+href=["']https:\/\/example\.com["']\s*>\s*go\s*<\/a>/i.test(input)
     }
   ];
@@ -74,7 +74,7 @@ export default function GamePage() {
       {step === 'intro' && (
         <div>
           <p style={{ fontSize: '1.2rem', color: '#f0f8ff' }}>
-            Practice writing simple HTML code. It&apos;s interactive, beginner-friendly, and fun!
+            Practice writing simple HTML code. It&rsquo;s interactive, beginner-friendly, and fun!
           </p>
           <button onClick={() => setStep('challenge')} style={{
             marginTop: '1rem',
@@ -111,7 +111,9 @@ export default function GamePage() {
               borderRadius: '10px',
               border: '1px solid #888',
               fontSize: '1rem',
-              fontFamily: 'monospace'
+              fontFamily: 'monospace',
+              backgroundColor: '#ffffff',
+              color: '#000000'
             }}
           />
           <br />
