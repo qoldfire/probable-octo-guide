@@ -1,18 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
+
+// Define a type for the questions
+type Question = {
+  instruction: string;
+  tip: string;
+  failTip: string;
+  placeholder?: string;
+  check?: (input: string) => boolean;
+  type: 'typing' | 'choice';
+  options?: string[];
+  correct?: string;
+};
 
 export default function GamePage() {
   const [step, setStep] = useState<'intro' | 'challenge' | 'complete'>('intro');
   const [inputValue, setInputValue] = useState('');
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState(0);
-  const [challengeSet, setChallengeSet] = useState([]);
+  const [challengeSet, setChallengeSet] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [playSound, setPlaySound] = useState(false);
 
-  const allChallenges = [
+  const allChallenges: Question[] = [
     {
       instruction: 'Write HTML that creates a paragraph that says "HTML is fun".',
       tip: 'Paragraphs start with a certain tag. The text goes inside it.',
@@ -105,7 +118,8 @@ export default function GamePage() {
   const handleSubmit = (answer?: string) => {
     let isCorrect = false;
     if (current.type === 'typing') {
-      isCorrect = current.check(inputValue.trim());
+      if (!inputValue.trim()) return; // Don't submit empty input
+      isCorrect = current.check?.(inputValue.trim()) ?? false;
     } else if (current.type === 'choice') {
       isCorrect = answer === current.correct;
     }
@@ -131,129 +145,134 @@ export default function GamePage() {
   };
 
   return (
-    <div className="wrapper" style={{
-      padding: '2rem',
-      textAlign: 'center',
-      color: '#ffffff',
-      background: 'linear-gradient(to bottom right, #2e0347, #162447)',
-      fontFamily: '"Poppins", sans-serif',
-      minHeight: '100vh',
-      transition: 'all 0.5s ease-in-out'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#ffeaa7' }}>
-        ✨ Learn HTML by Playing!
-      </h1>
-      <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#d0e0ff' }}>
-        This game is part of CodeQuest — a colorful way to learn web basics.
-      </p>
-      <div style={{ height: '10px', background: '#fff3', borderRadius: '5px', marginBottom: '1rem' }}>
-        <div style={{ width: `${progress}%`, background: '#6c5ce7', height: '100%', borderRadius: '5px', transition: 'width 0.5s' }} />
-      </div>
-
-      {step === 'intro' && (
-        <div>
-          <p style={{ fontSize: '1.2rem', color: '#f0f8ff' }}>
-            Start learning HTML from scratch with easy challenges!
-          </p>
-          <button onClick={() => setStep('challenge')} style={{
-            marginTop: '1rem',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '10px',
-            background: 'linear-gradient(to right, #ff6ec4, #7873f5)',
-            color: '#fff',
-            fontSize: '1rem',
-            cursor: 'pointer',
-            border: 'none',
-            transition: 'transform 0.3s'
-          }}>
-            Start Game
-          </button>
+    <>
+      <Head>
+        <title>HTML Learning Game</title>
+      </Head>
+      <div className="wrapper" style={{
+        padding: '2rem',
+        textAlign: 'center',
+        color: '#ffffff',
+        background: 'linear-gradient(to bottom right, #2e0347, #162447)',
+        fontFamily: '"Poppins", sans-serif',
+        minHeight: '100vh',
+        transition: 'all 0.5s ease-in-out'
+      }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#ffeaa7' }}>
+          ✨ Learn HTML by Playing!
+        </h1>
+        <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#d0e0ff' }}>
+          This game is part of CodeQuest — a colorful way to learn web basics.
+        </p>
+        <div style={{ height: '10px', background: '#fff3', borderRadius: '5px', marginBottom: '1rem' }}>
+          <div style={{ width: `${progress}%`, background: '#6c5ce7', height: '100%', borderRadius: '5px', transition: 'width 0.5s' }} />
         </div>
-      )}
 
-      {step === 'challenge' && current && (
-        <div style={{
-          background: 'rgba(255,255,255,0.08)',
-          padding: '1.5rem',
-          borderRadius: '15px',
-          maxWidth: '700px',
-          margin: '0 auto',
-          boxShadow: '0 0 15px rgba(0,0,0,0.3)'
-        }}>
-          <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#ffff88' }}>{current.instruction}</p>
-          <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#84ffff' }}>💡 Tip: {current.tip}</p>
-
-          {current.type === 'typing' ? (
-            <textarea
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              rows={2}
-              placeholder={current.placeholder}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: '10px',
-                border: '1px solid #ccc',
-                fontSize: '1rem',
-                fontFamily: 'monospace',
-                color: '#222',
-                backgroundColor: '#fff'
-              }}
-            />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {current.options.map((opt: string, idx: number) => (
-                <button key={idx} onClick={() => handleSubmit(opt)} style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  background: '#00cec9',
-                  color: 'white',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  border: 'none'
-                }}>{opt}</button>
-              ))}
-            </div>
-          )}
-
-          {current.type === 'typing' && (
-            <button onClick={() => handleSubmit()} style={{
+        {step === 'intro' && (
+          <div>
+            <p style={{ fontSize: '1.2rem', color: '#f0f8ff' }}>
+              Start learning HTML from scratch with easy challenges!
+            </p>
+            <button onClick={() => setStep('challenge')} style={{
               marginTop: '1rem',
-              padding: '0.5rem 1.25rem',
+              padding: '0.75rem 1.5rem',
               borderRadius: '10px',
-              background: 'linear-gradient(to right, #8e2de2, #f093fb)',
-              color: 'white',
+              background: 'linear-gradient(to right, #ff6ec4, #7873f5)',
+              color: '#fff',
+              fontSize: '1rem',
+              cursor: 'pointer',
+              border: 'none',
+              transition: 'transform 0.3s'
+            }}>
+              Start Game
+            </button>
+          </div>
+        )}
+
+        {step === 'challenge' && current && (
+          <div style={{
+            background: 'rgba(255,255,255,0.08)',
+            padding: '1.5rem',
+            borderRadius: '15px',
+            maxWidth: '700px',
+            margin: '0 auto',
+            boxShadow: '0 0 15px rgba(0,0,0,0.3)'
+          }}>
+            <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#ffff88' }}>{current.instruction}</p>
+            <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#84ffff' }}>💡 Tip: {current.tip}</p>
+
+            {current.type === 'typing' ? (
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                rows={2}
+                placeholder={current.placeholder}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  borderRadius: '10px',
+                  border: '1px solid #ccc',
+                  fontSize: '1rem',
+                  fontFamily: 'monospace',
+                  color: '#222',
+                  backgroundColor: '#fff'
+                }}
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {current.options?.map((opt: string, idx: number) => (
+                  <button key={idx} onClick={() => handleSubmit(opt)} style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    background: '#00cec9',
+                    color: 'white',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    border: 'none'
+                  }}>{opt}</button>
+                ))}
+              </div>
+            )}
+
+            {current.type === 'typing' && (
+              <button onClick={() => handleSubmit()} style={{
+                marginTop: '1rem',
+                padding: '0.5rem 1.25rem',
+                borderRadius: '10px',
+                background: 'linear-gradient(to right, #8e2de2, #f093fb)',
+                color: 'white',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                border: 'none'
+              }}>Submit</button>
+            )}
+
+            <p style={{ marginTop: '1rem', fontWeight: 'bold', color: '#ffb6c1' }}>{feedback}</p>
+          </div>
+        )}
+
+        {step === 'complete' && (
+          <div>
+            <p style={{ fontSize: '1.2rem', color: '#f5f5f5' }}>🎉 All done!</p>
+            <p style={{ color: '#ffeaa7' }}>Your score: {score} / {challengeSet.length}</p>
+            <button onClick={() => {
+              setScore(0);
+              setCurrentIndex(0);
+              setStep('challenge');
+              setProgress(0);
+            }} style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '10px',
+              background: 'linear-gradient(to right, #00cec9, #6c5ce7)',
+              color: '#fff',
               fontSize: '1rem',
               cursor: 'pointer',
               border: 'none'
-            }}>Submit</button>
-          )}
-
-          <p style={{ marginTop: '1rem', fontWeight: 'bold', color: '#ffb6c1' }}>{feedback}</p>
-        </div>
-      )}
-
-      {step === 'complete' && (
-        <div>
-          <p style={{ fontSize: '1.2rem', color: '#f5f5f5' }}>🎉 All done!</p>
-          <p style={{ color: '#ffeaa7' }}>Your score: {score} / {challengeSet.length}</p>
-          <button onClick={() => {
-            setScore(0);
-            setCurrentIndex(0);
-            setStep('challenge');
-            setProgress(0);
-          }} style={{
-            marginTop: '1rem',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '10px',
-            background: 'linear-gradient(to right, #00cec9, #6c5ce7)',
-            color: '#fff',
-            fontSize: '1rem',
-            cursor: 'pointer',
-            border: 'none'
-          }}>Play Again</button>
-        </div>
-      )}
-    </div>
+            }}>Play Again</button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
