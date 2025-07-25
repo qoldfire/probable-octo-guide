@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Head from 'next/head';
 
 export default function GamePage() {
   const [step, setStep] = useState<'intro' | 'challenge' | 'complete'>('intro');
@@ -11,38 +10,26 @@ export default function GamePage() {
 
   const challenges = [
     {
-      instruction: 'Create a paragraph that says: Hello World!',
-      tip:
-        'A paragraph is created with <p> tags. For example: <p>Hello World!</p>.',
-      placeholder: '<p>Hello World!</p>',
-      check: (input: string) =>
-        /<p>\s*hello world\s*<\/p>/i.test(input),
+      instruction: 'Type the word "HTML" inside a paragraph.',
+      tip: 'A paragraph element is used for general blocks of text.',
+      failTip: 'Try wrapping the word with an element that shows paragraphs.',
+      placeholder: '<p>HTML</p>',
+      check: (input: string) => /<p>\s*html\s*<\/p>/i.test(input)
     },
     {
-      instruction: 'Make the word "Welcome" a main heading.',
-      tip:
-        'Headings are made with <h1> to <h6> tags. The biggest heading is <h1>. Example: <h1>Welcome</h1>.',
+      instruction: 'Show the word "Welcome" as a heading.',
+      tip: 'Headings help define sections with titles and come in different levels.',
+      failTip: 'Use a level one heading element to highlight important titles.',
       placeholder: '<h1>Welcome</h1>',
-      check: (input: string) =>
-        /<h1>\s*welcome\s*<\/h1>/i.test(input),
+      check: (input: string) => /<h1>\s*welcome\s*<\/h1>/i.test(input)
     },
     {
-      instruction: 'Create a link to https://example.com that says "Click Here".',
-      tip:
-        'Use <a> tag with href attribute. Example: <a href="https://example.com">Click Here</a>.',
-      placeholder: '<a href="https://example.com">Click Here</a>',
-      check: (input: string) =>
-        /<a\s+href=['"]https:\/\/example\.com['"]\s*>\s*click here\s*<\/a>/i.test(input),
-    },
-    {
-      instruction: 'Add a list with these items: Apple, Banana, Cherry.',
-      tip:
-        'Use <ul> for unordered list and <li> for list items. Example: <ul><li>Apple</li></ul>.',
-      placeholder:
-        '<ul>\n  <li>Apple</li>\n  <li>Banana</li>\n  <li>Cherry</li>\n</ul>',
-      check: (input: string) =>
-        /<ul>[\s\S]*<li>\s*apple\s*<\/li>[\s\S]*<li>\s*banana\s*<\/li>[\s\S]*<li>\s*cherry\s*<\/li>[\s\S]*<\/ul>/i.test(input),
-    },
+      instruction: 'Make a link that says "Go" and points to https://example.com.',
+      tip: 'Links connect pages using a tag with a destination URL.',
+      failTip: 'Use an anchor element and set its destination with the right attribute.',
+      placeholder: '<a href="https://example.com">Go</a>',
+      check: (input: string) => /<a\s+href=["']https:\/\/example\.com["']\s*>\s*go\s*<\/a>/i.test(input)
+    }
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,73 +38,72 @@ export default function GamePage() {
   const handleSubmit = () => {
     if (current.check(inputValue.trim())) {
       setScore(score + 1);
-      setFeedback('✅ Awesome! You got it right.');
-      setTimeout(() => {
-        setFeedback('');
-        setInputValue('');
-        if (currentIndex + 1 < challenges.length) {
-          setCurrentIndex(currentIndex + 1);
-        } else {
-          setStep('complete');
-        }
-      }, 1400);
+      setFeedback('✅ Great job!');
     } else {
-      setFeedback('❌ Not quite. Tip: ' + current.tip);
+      setFeedback('❌ Try again. Hint: ' + current.failTip);
+      return;
     }
+
+    setTimeout(() => {
+      setFeedback('');
+      setInputValue('');
+      if (currentIndex + 1 < challenges.length) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setStep('complete');
+      }
+    }, 1200);
   };
 
   return (
-    <div className="wrapper" style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>
-      <Head>
-        <title>CodeQuest: Learn HTML Basics</title>
-      </Head>
-
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#cce6ff' }}>
-        🌐 HTML Beginner Challenge
+    <div className="wrapper" style={{
+      padding: '2rem',
+      textAlign: 'center',
+      color: '#ffffff',
+      background: 'linear-gradient(to bottom right, #1a1a3d, #2c3e50)',
+      fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+      minHeight: '100vh'
+    }}>
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#aee2ff' }}>
+        🌐 Learn HTML by Playing!
       </h1>
-      <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#eef' }}>
-        Start your journey learning HTML — the language of the web!
+      <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#eee' }}>
+        This mini-game is part of CodeQuest — a colorful adventure that helps you learn web development step-by-step.
       </p>
 
       {step === 'intro' && (
         <div>
-          <p style={{ fontSize: '1.2rem' }}>
-            You&apos;ll learn to write basic HTML tags step-by-step. Try your best, and have fun!
+          <p style={{ fontSize: '1.2rem', color: '#f0f8ff' }}>
+            Practice writing simple HTML code. It's interactive, beginner-friendly, and fun!
           </p>
-          <button
-            onClick={() => setStep('challenge')}
-            style={{
-              marginTop: '1rem',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '10px',
-              background: '#6c5ce7',
-              color: '#fff',
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-          >
-            Start Learning
-          </button>
+          <button onClick={() => setStep('challenge')} style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '10px',
+            background: 'linear-gradient(to right, #6c5ce7, #00cec9)',
+            color: '#fff',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            border: 'none'
+          }}>Start Learning</button>
         </div>
       )}
 
       {step === 'challenge' && (
-        <div
-          style={{
-            background: 'rgba(0,0,50,0.4)',
-            padding: '1.5rem',
-            borderRadius: '15px',
-            maxWidth: '700px',
-            margin: '0 auto',
-            boxShadow: '0 0 15px rgba(0,0,0,0.6)',
-          }}
-        >
-          <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>{current.instruction}</p>
-          <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#aaf' }}>💡 Tip: {current.tip}</p>
+        <div style={{
+          background: 'rgba(255,255,255,0.05)',
+          padding: '1.5rem',
+          borderRadius: '15px',
+          maxWidth: '700px',
+          margin: '0 auto',
+          boxShadow: '0 0 15px rgba(0,0,0,0.5)'
+        }}>
+          <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#ffff88' }}>{current.instruction}</p>
+          <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#84ffff' }}>💡 Tip: {current.tip}</p>
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            rows={3}
+            rows={2}
             placeholder={current.placeholder}
             style={{
               width: '100%',
@@ -125,55 +111,42 @@ export default function GamePage() {
               borderRadius: '10px',
               border: '1px solid #888',
               fontSize: '1rem',
-              fontFamily: 'monospace',
-              resize: 'vertical',
+              fontFamily: 'monospace'
             }}
           />
           <br />
-          <button
-            onClick={handleSubmit}
-            style={{
-              marginTop: '1rem',
-              padding: '0.5rem 1.25rem',
-              borderRadius: '10px',
-              background: 'linear-gradient(to right, #00c6ff, #8e2de2)',
-              color: 'white',
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-          >
-            Submit
-          </button>
-          <p style={{ marginTop: '1rem', fontWeight: 'bold' }}>{feedback}</p>
+          <button onClick={handleSubmit} style={{
+            marginTop: '1rem',
+            padding: '0.5rem 1.25rem',
+            borderRadius: '10px',
+            background: 'linear-gradient(to right, #8e2de2, #f093fb)',
+            color: 'white',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            border: 'none'
+          }}>Submit</button>
+          <p style={{ marginTop: '1rem', fontWeight: 'bold', color: '#ffb6c1' }}>{feedback}</p>
         </div>
       )}
 
       {step === 'complete' && (
         <div>
-          <p style={{ fontSize: '1.3rem' }}>🎉 Congratulations! You completed the beginner challenges.</p>
-          <p style={{ marginBottom: '1rem' }}>
-            Your score: {score} / {challenges.length}
-          </p>
-          <button
-            onClick={() => {
-              setScore(0);
-              setCurrentIndex(0);
-              setStep('challenge');
-              setFeedback('');
-              setInputValue('');
-            }}
-            style={{
-              marginTop: '1rem',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '10px',
-              background: '#8a2be2',
-              color: '#fff',
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-          >
-            Try Again
-          </button>
+          <p style={{ fontSize: '1.2rem', color: '#f5f5f5' }}>🎉 You did it!</p>
+          <p style={{ color: '#ffeaa7' }}>Your score: {score} / {challenges.length}</p>
+          <button onClick={() => {
+            setScore(0);
+            setCurrentIndex(0);
+            setStep('challenge');
+          }} style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '10px',
+            background: 'linear-gradient(to right, #00cec9, #6c5ce7)',
+            color: '#fff',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            border: 'none'
+          }}>Play Again</button>
         </div>
       )}
     </div>
