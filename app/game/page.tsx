@@ -26,7 +26,7 @@ export default function GamePage() {
   const allChallenges: Question[] = [
     {
       instruction: 'Write HTML that creates a paragraph that says "HTML is fun".',
-      tip: 'Wrap your sentence using the correct tag for paragraphs.',
+      tip: 'Use paragraph tags to wrap the sentence.',
       failTip: 'The <p> tag wraps content in a paragraph.',
       placeholder: '<p>HTML is fun</p>',
       check: (input: string) => /<p>\s*html is fun\s*<\/p>/i.test(input),
@@ -34,7 +34,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Which tag makes the biggest heading?',
-      tip: 'Lower heading numbers mean larger size.',
+      tip: 'Heading sizes decrease with larger numbers.',
       options: ['<h1>', '<h3>', '<h6>'],
       correct: '<h1>',
       failTip: 'Use the largest heading tag available.',
@@ -42,7 +42,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Choose the correct tag for a hyperlink.',
-      tip: 'It starts with "a" and is used for links.',
+      tip: 'It allows users to navigate to a different page.',
       options: ['<p>', '<a>', '<link>'],
       correct: '<a>',
       failTip: 'It allows navigation to another page.',
@@ -50,7 +50,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Type HTML to make the word "Code" bold.',
-      tip: 'Use a tag that makes text stand out visually.',
+      tip: 'Bold tags emphasize text weight.',
       failTip: 'Try using <strong> or <b>.',
       placeholder: '<strong>Code</strong>',
       check: (input: string) => /<(strong|b)>\s*code\s*<\/(strong|b)>/i.test(input),
@@ -58,7 +58,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Which tag is used for images?',
-      tip: 'It includes the src attribute and ends with a slash.',
+      tip: 'It includes the src attribute and is self-closing.',
       options: ['<img>', '<picture>', '<src>'],
       correct: '<img>',
       failTip: 'It is used to display pictures.',
@@ -66,7 +66,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Type HTML to create a level 2 heading that says "Start".',
-      tip: 'Use the second largest heading level.',
+      tip: 'Use the second-largest heading tag.',
       failTip: 'Try <h2>Start</h2>.',
       placeholder: '<h2>Start</h2>',
       check: (input: string) => /<h2>\s*start\s*<\/h2>/i.test(input),
@@ -74,7 +74,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Which element creates a line break?',
-      tip: 'It is short and self-closing.',
+      tip: 'It is commonly used to start a new line.',
       options: ['<hr>', '<br>', '<line>'],
       correct: '<br>',
       failTip: 'It is used to break lines.',
@@ -82,7 +82,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Write HTML to make the text "Fun" italic.',
-      tip: 'Use a tag that visually slants the text.',
+      tip: 'Use tags that visually slant the text.',
       failTip: 'Try using <i> or <em>.',
       placeholder: '<em>Fun</em>',
       check: (input: string) => /<(i|em)>\s*fun\s*<\/(i|em)>/i.test(input),
@@ -90,7 +90,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Which tag defines a list item?',
-      tip: 'It is nested inside ordered or unordered lists.',
+      tip: 'It is used inside lists.',
       options: ['<li>', '<ol>', '<ul>'],
       correct: '<li>',
       failTip: 'It defines a list item.',
@@ -98,7 +98,7 @@ export default function GamePage() {
     },
     {
       instruction: 'Write HTML to create a link that says "Site" and goes to example.com.',
-      tip: 'Use an anchor tag with the correct attribute.',
+      tip: 'Use an anchor tag with an href attribute.',
       failTip: 'Try <a href="https://example.com">Site</a>',
       placeholder: '<a href="https://example.com">Site</a>',
       check: (input: string) => /<a\s+href=["']https:\/\/example\.com["']>\s*site\s*<\/a>/i.test(input),
@@ -108,7 +108,7 @@ export default function GamePage() {
 
   useEffect(() => {
     const shuffled = [...allChallenges].sort(() => 0.5 - Math.random());
-    setChallengeSet(shuffled.slice(0, 3));
+    setChallengeSet(shuffled.slice(0, 10));
     setCurrentIndex(0);
   }, [step]);
 
@@ -142,12 +142,15 @@ export default function GamePage() {
     }, 1000);
   };
 
-  const progress = ((currentIndex + (step === 'complete' ? 1 : 0)) / challengeSet.length) * 100;
+  const progress = ((currentIndex + (feedback ? 1 : 0)) / challengeSet.length) * 100;
 
   return (
     <>
       <Head>
         <title>CodeQuest</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
       </Head>
       <div style={{
         padding: '2rem',
@@ -156,13 +159,14 @@ export default function GamePage() {
         background: 'linear-gradient(to bottom right, #3f0d7d, #162447)',
         fontFamily: 'Poppins, sans-serif',
         minHeight: '100vh',
+        backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 25%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 25%)',
         transition: 'all 0.5s ease-in-out'
       }}>
         {step === 'intro' && (
-          <div>
+          <div style={{ animation: 'fadeIn 1s ease-in-out' }}>
             <h1 style={{ fontSize: '3rem', color: '#f0f8ff' }}>Welcome to CodeQuest</h1>
             <p style={{ fontSize: '1.25rem' }}>Learn HTML the fun way! Ready to begin?</p>
-            <button onClick={() => setStep('challenge')} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem' }}>Start Game</button>
+            <button onClick={() => setStep('challenge')} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem', cursor: 'pointer' }}>Start Game</button>
           </div>
         )}
 
@@ -177,7 +181,7 @@ export default function GamePage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={current.placeholder || ''}
-                style={{ padding: '0.5rem', fontSize: '1rem', width: '80%', color: '#000' }}
+                style={{ padding: '0.75rem', fontSize: '1rem', width: '80%', borderRadius: '0.5rem', border: '1px solid #ccc', color: '#000' }}
               />
             )}
 
@@ -187,7 +191,7 @@ export default function GamePage() {
                   <button
                     key={idx}
                     onClick={() => handleSubmit(option)}
-                    style={{ margin: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#4e54c8', color: '#fff', border: 'none', borderRadius: '0.5rem' }}
+                    style={{ margin: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#4e54c8', color: '#fff', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}
                   >
                     {option}
                   </button>
@@ -197,7 +201,7 @@ export default function GamePage() {
 
             <div style={{ marginTop: '1rem' }}>
               {current.type === 'typing' && (
-                <button onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '0.5rem' }}>Submit</button>
+                <button onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}>Submit</button>
               )}
               <p>{feedback}</p>
               <progress value={progress} max={100} style={{ width: '100%', marginTop: '1rem' }} />
@@ -209,7 +213,7 @@ export default function GamePage() {
           <div>
             <h2 style={{ color: '#b0e0e6' }}>Well done!</h2>
             <p>Your score: {score}/{challengeSet.length}</p>
-            <button onClick={() => { setStep('intro'); setCurrentIndex(0); setScore(0); }} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem' }}>Play Again</button>
+            <button onClick={() => { setStep('intro'); setCurrentIndex(0); setScore(0); }} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem', cursor: 'pointer' }}>Play Again</button>
           </div>
         )}
       </div>
