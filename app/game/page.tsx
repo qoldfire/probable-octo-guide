@@ -159,20 +159,20 @@ export default function GamePage() {
         textAlign: 'center',
         color: '#ffffff',
         background: 'linear-gradient(to bottom right, #2e0347, #162447)',
-        fontFamily: '"Poppins", sans-serif',
+        fontFamily: 'Poppins, sans-serif',
         minHeight: '100vh',
         transition: 'all 0.5s ease-in-out'
       }}>
         {step === 'intro' && (
-          <div>
-            <h1>Welcome to CodeQuest</h1>
-            <p>Learn HTML the fun way! Ready to begin?</p>
-            <button onClick={() => setStep('challenge')}>Start Game</button>
+          <div className="intro">
+            <h1 className="title">Welcome to CodeQuest</h1>
+            <p className="subtitle">Learn HTML the fun way! Ready to begin?</p>
+            <button onClick={() => setStep('challenge')} className="start-button">Start Game</button>
           </div>
         )}
 
         {step === 'challenge' && current && (
-          <div>
+          <div className="challenge">
             <h2>{current.instruction}</h2>
             <p><em>Hint:</em> {current.tip}</p>
 
@@ -182,12 +182,12 @@ export default function GamePage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={current.placeholder || ''}
-                style={{ padding: '0.5rem', fontSize: '1rem', width: '80%' }}
+                style={{ padding: '0.5rem', fontSize: '1rem', width: '80%', color: '#000' }}
               />
             )}
 
             {current.type === 'choice' && current.options && (
-              <div>
+              <div className="choices">
                 {current.options.map((option, idx) => (
                   <button
                     key={idx}
@@ -200,9 +200,9 @@ export default function GamePage() {
               </div>
             )}
 
-            <div style={{ marginTop: '1rem' }}>
+            <div className="feedback" style={{ marginTop: '1rem' }}>
               {current.type === 'typing' && (
-                <button onClick={() => handleSubmit()}>Submit</button>
+                <button onClick={() => handleSubmit()} className="submit-button">Submit</button>
               )}
               <p>{feedback}</p>
               <progress value={progress} max={100} style={{ width: '100%' }} />
@@ -211,7 +211,7 @@ export default function GamePage() {
         )}
 
         {step === 'complete' && (
-          <div>
+          <div className="complete">
             <h2>Well done!</h2>
             <p>Your score: {score}/{challengeSet.length}</p>
             <button onClick={() => { setStep('intro'); setCurrentIndex(0); setScore(0); }}>Play Again</button>
