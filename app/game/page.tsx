@@ -74,7 +74,7 @@ export default function GamePage() {
       {step === 'intro' && (
         <div>
           <p style={{ fontSize: '1.2rem', color: '#f0f8ff' }}>
-            Practice writing simple HTML code. It's interactive, beginner-friendly, and fun!
+            Practice writing simple HTML code. It&apos;s interactive, beginner-friendly, and fun!
           </p>
           <button onClick={() => setStep('challenge')} style={{
             marginTop: '1rem',
