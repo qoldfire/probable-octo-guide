@@ -128,10 +128,6 @@ const choiceButtonStyle = {
   transition: "background-color 0.3s",
 } as React.CSSProperties;
 
-const choiceButtonHoverStyle = {
-  backgroundColor: "#6a5acd",
-};
-
 const hintStyle: React.CSSProperties = {
   marginTop: "1rem",
   fontStyle: "italic",
@@ -252,7 +248,8 @@ export default function CodeQuestGame() {
             <div>
               {questions[currentIndex].choices.map((choice) => {
                 const isSelected = selectedAnswer === choice;
-                let backgroundColor = choiceButtonStyle.backgroundColor;
+                // FIX: Use fallback to avoid undefined error
+                let backgroundColor = choiceButtonStyle.backgroundColor ?? "#483d8b";
                 if (isSelected) {
                   backgroundColor =
                     answeredCorrectly === true
