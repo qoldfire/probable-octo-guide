@@ -156,64 +156,115 @@ export default function GamePage() {
         padding: '2rem',
         textAlign: 'center',
         color: '#fff',
-        background: 'linear-gradient(to bottom right, #3f0d7d, #162447)',
+        background: 'linear-gradient(to bottom right, #6a11cb, #2575fc)',
         fontFamily: 'Poppins, sans-serif',
         minHeight: '100vh',
         backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 25%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 25%)',
         transition: 'all 0.5s ease-in-out'
       }}>
         {step === 'intro' && (
-          <div style={{ animation: 'fadeIn 1s ease-in-out' }}>
-            <h1 style={{ fontSize: '3rem', color: '#f0f8ff' }}>Welcome to CodeQuest</h1>
-            <p style={{ fontSize: '1.25rem' }}>Learn HTML the fun way! Ready to begin?</p>
-            <button onClick={() => setStep('challenge')} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem', cursor: 'pointer' }}>Start Game</button>
+          <div>
+            <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Welcome to CodeQuest</h1>
+            <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>Test your HTML skills with fun challenges!</p>
+            <button
+              style={{
+                background: 'linear-gradient(90deg, #ff6ec4, #7873f5)',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '1rem 2rem',
+                fontSize: '1.2rem',
+                color: 'white',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                transition: 'transform 0.2s ease'
+              }}
+              onClick={() => setStep('challenge')}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              Start Game
+            </button>
           </div>
         )}
 
         {step === 'challenge' && current && (
-          <div style={{ marginTop: '2rem', animation: 'fadeIn 0.5s ease-in-out' }}>
-            <h2 style={{ color: '#ffccff' }}>{current.instruction}</h2>
-            <p style={{ color: '#b3e6ff' }}><em>Hint:</em> {current.tip}</p>
-
-            {current.type === 'typing' && (
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder={current.placeholder || ''}
-                style={{ padding: '0.75rem', fontSize: '1rem', width: '80%', borderRadius: '0.5rem', border: '1px solid #ccc', color: '#000' }}
-              />
-            )}
-
-            {current.type === 'choice' && current.options && (
-              <div>
-                {current.options.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleSubmit(option)}
-                    style={{ margin: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#4e54c8', color: '#fff', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
-
+          <div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{current.instruction}</h2>
+            <p style={{ color: '#ffd700', fontWeight: 'bold' }}>{current.tip}</p>
             <div style={{ marginTop: '1rem' }}>
-              {current.type === 'typing' && (
-                <button onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', fontSize: '1rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}>Submit</button>
+              {current.type === 'typing' ? (
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  placeholder={current.placeholder}
+                  style={{
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    border: '2px solid #fff',
+                    fontSize: '1rem',
+                    width: '80%',
+                    maxWidth: '500px'
+                  }}
+                />
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                  {current.options?.map(option => (
+                    <button
+                      key={option}
+                      onClick={() => handleSubmit(option)}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: '8px',
+                        backgroundColor: '#fff',
+                        color: '#333',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '1rem',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#eee'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = '#fff'}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
               )}
-              <p>{feedback}</p>
-              <progress value={progress} max={100} style={{ width: '100%', marginTop: '1rem' }} />
+            </div>
+            <div style={{ marginTop: '1rem', height: '1.5rem', fontWeight: 'bold' }}>{feedback}</div>
+            <div style={{ marginTop: '2rem' }}>
+              <div style={{ height: '10px', width: '80%', background: '#444', margin: '0 auto', borderRadius: '5px' }}>
+                <div style={{ height: '100%', width: `${progress}%`, background: '#00f2fe', borderRadius: '5px', transition: 'width 0.5s ease-in-out' }}></div>
+              </div>
+              <p style={{ marginTop: '0.5rem' }}>{currentIndex + 1} / {challengeSet.length}</p>
             </div>
           </div>
         )}
 
         {step === 'complete' && (
           <div>
-            <h2 style={{ color: '#b0e0e6' }}>Well done!</h2>
-            <p>Your score: {score}/{challengeSet.length}</p>
-            <button onClick={() => { setStep('intro'); setCurrentIndex(0); setScore(0); }} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: '#6a0dad', color: '#fff', border: 'none', borderRadius: '1rem', fontSize: '1.1rem', cursor: 'pointer' }}>Play Again</button>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎉 Great job! 🎉</h2>
+            <p style={{ fontSize: '1.25rem' }}>Your score: {score} / {challengeSet.length}</p>
+            <button
+              style={{
+                background: 'linear-gradient(90deg, #ff6ec4, #7873f5)',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '1rem 2rem',
+                fontSize: '1.2rem',
+                color: 'white',
+                cursor: 'pointer',
+                marginTop: '2rem',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                transition: 'transform 0.2s ease'
+              }}
+              onClick={() => setStep('intro')}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              Play Again
+            </button>
           </div>
         )}
       </div>
