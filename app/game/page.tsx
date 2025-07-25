@@ -150,11 +150,6 @@ const choiceButtonStyle = {
   userSelect: "none",
 } as React.CSSProperties;
 
-const choiceButtonHover = {
-  backgroundColor: "#6a5acd",
-  transform: "scale(1.05)",
-};
-
 const hintStyle: React.CSSProperties = {
   marginTop: "1rem",
   fontStyle: "italic",
@@ -378,6 +373,9 @@ export default function CodeQuestGame() {
                     border: "none",
                     fontSize: "1rem",
                     boxSizing: "border-box",
+                    backgroundColor: "#483d8b", // Dark purple-blue background
+                    color: "white",              // White text for visibility
+                    outline: "none",
                   }}
                   aria-label="Type your answer"
                   autoComplete="off"
