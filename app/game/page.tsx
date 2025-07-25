@@ -82,7 +82,7 @@ export default function GamePage() {
       {step === 'intro' && (
         <div>
           <p style={{ fontSize: '1.2rem' }}>
-            You'll learn to write basic HTML tags step-by-step. Try your best, and have fun!
+            You&apos;ll learn to write basic HTML tags step-by-step. Try your best, and have fun!
           </p>
           <button
             onClick={() => setStep('challenge')}
