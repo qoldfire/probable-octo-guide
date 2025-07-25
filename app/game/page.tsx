@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 type Question = {
+  id: number;
+  type: "multiple-choice" | "text";
   question: string;
-  choices: string[];
+  choices?: string[]; // Only for multiple choice
   answer: string;
   hint: string;
 };
 
 const questionsPool: Question[] = [
   {
+    id: 1,
+    type: "multiple-choice",
     question: "What does HTML stand for?",
     choices: [
       "HyperText Markup Language",
@@ -22,61 +26,70 @@ const questionsPool: Question[] = [
     hint: "It's about marking up hypertext documents.",
   },
   {
+    id: 2,
+    type: "multiple-choice",
     question: "Which tag is used to create a hyperlink?",
     choices: ["<a>", "<link>", "<href>", "<hyperlink>"],
     answer: "<a>",
     hint: "It stands for anchor.",
   },
   {
-    question: "How do you add a comment in HTML?",
-    choices: [
-      "// This is a comment",
-      "<!-- This is a comment -->",
-      "/* This is a comment */",
-      "# This is a comment",
-    ],
-    answer: "<!-- This is a comment -->",
+    id: 3,
+    type: "text",
+    question: "How do you add a comment in HTML? (Write the tag exactly)",
+    answer: "<!-- -->",
     hint: "It uses angle brackets and exclamation marks.",
   },
   {
+    id: 4,
+    type: "multiple-choice",
     question: "Which tag is used to define a paragraph?",
     choices: ["<p>", "<para>", "<paragraph>", "<text>"],
     answer: "<p>",
     hint: "It's a single letter tag.",
   },
   {
-    question: "What attribute is used to specify an image source?",
-    choices: ["src", "href", "link", "img"],
+    id: 5,
+    type: "text",
+    question: "What attribute is used to specify an image source? (Write only the attribute name)",
     answer: "src",
     hint: "Think 'source' abbreviation.",
   },
   {
+    id: 6,
+    type: "multiple-choice",
     question: "Which tag is used for the largest heading?",
     choices: ["<h1>", "<head>", "<header>", "<h6>"],
     answer: "<h1>",
     hint: "It’s the first heading tag.",
   },
   {
+    id: 7,
+    type: "multiple-choice",
     question: "How do you create an unordered list?",
     choices: ["<ul>", "<ol>", "<list>", "<li>"],
     answer: "<ul>",
     hint: "It starts with 'u' for unordered.",
   },
   {
-    question: "Which tag encloses the body content?",
-    choices: ["<body>", "<content>", "<html>", "<section>"],
+    id: 8,
+    type: "text",
+    question: "Which tag encloses the body content? (Write the tag exactly)",
     answer: "<body>",
     hint: "It's the main visible content container.",
   },
   {
+    id: 9,
+    type: "multiple-choice",
     question: "What tag would you use for inserting a line break?",
     choices: ["<br>", "<break>", "<lb>", "<line>"],
     answer: "<br>",
     hint: "It's an empty tag with letters 'b' and 'r'.",
   },
   {
-    question: "Which attribute controls the text color in HTML?",
-    choices: ["color", "text-color", "font-color", "style"],
+    id: 10,
+    type: "text",
+    question: "Which attribute controls the text color in HTML? (Write the attribute name)",
     answer: "style",
     hint: "It's a global attribute for CSS styles.",
   },
@@ -178,12 +191,10 @@ const incorrectStyle: React.CSSProperties = {
 };
 
 export default function CodeQuestGame() {
-  // Set page title
   useEffect(() => {
     document.title = "CodeQuest";
   }, []);
 
-  // Select 3 unique random questions
   const getRandomQuestions = (): Question[] => {
     const shuffled = [...questionsPool].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 3);
@@ -192,35 +203,61 @@ export default function CodeQuestGame() {
   const [questions, setQuestions] = useState<Question[]>(getRandomQuestions());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [typedAnswer, setTypedAnswer] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredCorrectly, setAnsweredCorrectly] = useState<boolean | null>(
     null
   );
 
-  const handleAnswer = (choice: string) => {
-    if (selectedAnswer) return; // Prevent multiple answers for same question
-    setSelectedAnswer(choice);
-    if (choice === questions[currentIndex].answer) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const normalize = (text: string) =>
+    text.trim().toLowerCase().replace(/\s+/g, "");
+
+  const handleAnswer = (choice?: string) => {
+    if (selectedAnswer || answeredCorrectly === true) return;
+
+    let userAnswer = "";
+    if (questions[currentIndex].type === "multiple-choice") {
+      if (!choice) return;
+      userAnswer = choice;
+    } else {
+      userAnswer = typedAnswer;
+    }
+
+    if (
+      normalize(userAnswer) === normalize(questions[currentIndex].answer)
+    ) {
       setScore(score + 1);
       setAnsweredCorrectly(true);
       setShowHint(false);
-      // Automatically move to next question after short delay
+      setSelectedAnswer(userAnswer);
+
+      // Auto move to next question after delay
       setTimeout(() => {
         nextQuestion();
       }, 1500);
     } else {
       setAnsweredCorrectly(false);
       setShowHint(true);
+      if (questions[currentIndex].type === "multiple-choice") {
+        setSelectedAnswer(userAnswer);
+      }
     }
   };
 
   const nextQuestion = () => {
     setSelectedAnswer(null);
+    setTypedAnswer("");
     setShowHint(false);
     setAnsweredCorrectly(null);
+
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex(currentIndex + 1);
+      if (questions[currentIndex + 1].type === "text") {
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
     }
   };
 
@@ -228,9 +265,11 @@ export default function CodeQuestGame() {
     setQuestions(getRandomQuestions());
     setCurrentIndex(0);
     setSelectedAnswer(null);
+    setTypedAnswer("");
     setShowHint(false);
     setScore(0);
     setAnsweredCorrectly(null);
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   return (
@@ -247,44 +286,85 @@ export default function CodeQuestGame() {
               <p>{questions[currentIndex].question}</p>
             </div>
 
-            <div>
-              {questions[currentIndex].choices.map((choice) => {
-                const isSelected = selectedAnswer === choice;
-                // FIX: Use fallback to avoid undefined error
-                let backgroundColor = choiceButtonStyle.backgroundColor ?? "#483d8b";
-                if (isSelected) {
-                  backgroundColor =
-                    answeredCorrectly === true
-                      ? "#00bfff" // bright blue for correct
-                      : "#ff6347"; // tomato red for incorrect
-                }
-                return (
-                  <button
-                    key={choice}
-                    onClick={() => handleAnswer(choice)}
-                    disabled={!!selectedAnswer && !isSelected}
-                    style={{
-                      ...choiceButtonStyle,
-                      backgroundColor,
-                      cursor: selectedAnswer ? "default" : "pointer",
-                    }}
-                    onMouseOver={(e) => {
-                      if (!selectedAnswer) {
-                        (e.currentTarget.style.backgroundColor = "#6a5acd");
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      if (!selectedAnswer) {
-                        (e.currentTarget.style.backgroundColor = backgroundColor);
-                      }
-                    }}
-                    aria-pressed={isSelected}
-                  >
-                    {choice}
-                  </button>
-                );
-              })}
-            </div>
+            {questions[currentIndex].type === "multiple-choice" ? (
+              <div>
+                {questions[currentIndex].choices!.map((choice) => {
+                  const isSelected = selectedAnswer === choice;
+                  let backgroundColor =
+                    choiceButtonStyle.backgroundColor ?? "#483d8b";
+                  if (isSelected) {
+                    backgroundColor =
+                      answeredCorrectly === true
+                        ? "#00bfff" // bright blue for correct
+                        : "#ff6347"; // tomato red for incorrect
+                  }
+                  return (
+                    <button
+                      key={choice}
+                      onClick={() => handleAnswer(choice)}
+                      disabled={!!selectedAnswer && !isSelected}
+                      style={{
+                        ...choiceButtonStyle,
+                        backgroundColor,
+                        cursor: selectedAnswer ? "default" : "pointer",
+                      }}
+                      onMouseOver={(e) => {
+                        if (!selectedAnswer) {
+                          e.currentTarget.style.backgroundColor = "#6a5acd";
+                        }
+                      }}
+                      onMouseOut={(e) => {
+                        if (!selectedAnswer) {
+                          e.currentTarget.style.backgroundColor = backgroundColor;
+                        }
+                      }}
+                      aria-pressed={isSelected}
+                    >
+                      {choice}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAnswer();
+                }}
+                style={{ marginTop: "1rem" }}
+                noValidate
+              >
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={typedAnswer}
+                  onChange={(e) => setTypedAnswer(e.target.value)}
+                  placeholder="Type your answer here"
+                  disabled={answeredCorrectly === true}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 1rem",
+                    borderRadius: 8,
+                    border: "none",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                  }}
+                  aria-label="Type your answer"
+                  autoComplete="off"
+                />
+                <button
+                  type="submit"
+                  disabled={!typedAnswer.trim() || answeredCorrectly === true}
+                  style={{
+                    marginTop: "0.75rem",
+                    ...playAgainButtonStyle,
+                    width: "100%",
+                  }}
+                >
+                  Submit
+                </button>
+              </form>
+            )}
 
             {showHint && (
               <div
@@ -301,11 +381,15 @@ export default function CodeQuestGame() {
             )}
 
             {answeredCorrectly === false && (
-              <div style={incorrectStyle}>Oops! Try again or use the hint.</div>
+              <div style={incorrectStyle}>
+                Oops! Try again or use the hint.
+              </div>
             )}
 
-            {answeredCorrectly === true && (
-              <div style={correctStyle}>Correct! Moving to next question...</div>
+            {answeredCorrectly === true && currentIndex < questions.length - 1 && (
+              <div style={correctStyle}>
+                Correct! Moving to next question...
+              </div>
             )}
           </>
         ) : (
@@ -318,6 +402,7 @@ export default function CodeQuestGame() {
                 onClick={playAgain}
                 style={playAgainButtonStyle}
                 aria-label="Play again"
+                autoFocus
               >
                 Play Again
               </button>
