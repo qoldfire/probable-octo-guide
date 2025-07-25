@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 
+// Define a type for the questions
 type Question = {
   instruction: string;
   tip: string;
@@ -26,47 +27,47 @@ export default function GamePage() {
   const allChallenges: Question[] = [
     {
       instruction: 'Write HTML that creates a paragraph that says "HTML is fun".',
-      tip: 'Paragraphs start with a certain tag. The text goes inside it.',
-      failTip: 'Try wrapping the sentence with a paragraph tag like <p>...</p>.',
+      tip: 'Remember the tag that wraps text to form a paragraph.',
+      failTip: 'Try using a paragraph tag like <p>.',
       placeholder: '<p>HTML is fun</p>',
       check: (input: string) => /<p>\s*html is fun\s*<\/p>/i.test(input),
       type: 'typing',
     },
     {
       instruction: 'Which tag makes the biggest heading?',
-      tip: 'Heading levels go from h1 (biggest) to h6 (smallest).',
+      tip: 'Heading tags range from h1 to h6.',
       options: ['<h1>', '<h3>', '<h6>'],
       correct: '<h1>',
-      failTip: 'Try the heading tag with the smallest number.',
+      failTip: 'The biggest heading uses the smallest number.',
       type: 'choice',
     },
     {
       instruction: 'Choose the correct tag for a hyperlink.',
-      tip: 'This tag starts with "a" and uses href to link to URLs.',
+      tip: 'This tag is used for links and has href.',
       options: ['<p>', '<a>', '<link>'],
       correct: '<a>',
-      failTip: 'It’s the tag that links to other pages.',
+      failTip: 'It starts with the letter "a".',
       type: 'choice',
     },
     {
       instruction: 'Type HTML to make the word "Code" bold.',
-      tip: 'Use the tag for bold text: either <strong> or <b>.',
-      failTip: 'Try wrapping "Code" with <strong> or <b> tags.',
+      tip: 'Use the tag that styles text bold.',
+      failTip: 'Try using <strong> or <b> tags.',
       placeholder: '<strong>Code</strong>',
       check: (input: string) => /<(strong|b)>\s*code\s*<\/(strong|b)>/i.test(input),
       type: 'typing',
     },
     {
       instruction: 'Which tag is used for images?',
-      tip: 'This tag uses src and alt attributes and is self-closing.',
+      tip: 'This tag is self-closing and uses src and alt.',
       options: ['<img>', '<picture>', '<src>'],
       correct: '<img>',
-      failTip: 'It’s the tag with src and no closing tag.',
+      failTip: 'It starts with "img" and does not need a closing tag.',
       type: 'choice',
     },
     {
       instruction: 'Type HTML to create a level 2 heading that says "Start".',
-      tip: 'Headings use tags like h1, h2, etc.',
+      tip: 'Headings go from h1 (largest) to h6 (smallest).',
       failTip: 'Try using <h2>Start</h2>.',
       placeholder: '<h2>Start</h2>',
       check: (input: string) => /<h2>\s*start\s*<\/h2>/i.test(input),
@@ -74,40 +75,41 @@ export default function GamePage() {
     },
     {
       instruction: 'Which element creates a line break?',
-      tip: 'It’s a self-closing tag with just two letters.',
+      tip: 'It is a self-closing tag with "br".',
       options: ['<hr>', '<br>', '<line>'],
       correct: '<br>',
-      failTip: 'It’s the tag with "br".',
+      failTip: 'It’s just two letters: br.',
       type: 'choice',
     },
     {
       instruction: 'Write HTML to make the text "Fun" italic.',
-      tip: 'Use italic tags like <i> or <em>.',
-      failTip: 'Try wrapping "Fun" with <i> or <em> tags.',
+      tip: 'Italic text can use <i> or <em> tags.',
+      failTip: 'Try using <i> or <em>.',
       placeholder: '<em>Fun</em>',
       check: (input: string) => /<(i|em)>\s*fun\s*<\/(i|em)>/i.test(input),
       type: 'typing',
     },
     {
       instruction: 'Which tag defines a list item?',
-      tip: 'It starts with "l" and is used inside lists.',
+      tip: 'Used inside ordered or unordered lists.',
       options: ['<li>', '<ol>', '<ul>'],
       correct: '<li>',
-      failTip: 'It is used inside <ul> or <ol> lists.',
+      failTip: 'The list item tag is "li".',
       type: 'choice',
     },
     {
       instruction: 'Write HTML to create a link that says "Site" and goes to example.com.',
-      tip: 'Links use <a> and the href attribute.',
-      failTip: 'Try <a href="https://example.com">Site</a>.',
+      tip: 'Links use <a> with href attribute.',
+      failTip: 'Try <a href="https://example.com">Site</a>',
       placeholder: '<a href="https://example.com">Site</a>',
-      check: (input: string) => /<a\s+href=["']https:\/\/example\.com["']>\s*site\s*<\/a>/i.test(input),
+      check: (input: string) =>
+        /<a\s+href=["']https:\/\/example\.com["']>\s*site\s*<\/a>/i.test(input),
       type: 'typing',
     },
   ];
 
-  useEffect(() => {
-    // Shuffle and pick 3 challenges every time we start or restart
+  // Start or restart the game, shuffle and pick 3 questions
+  const startGame = () => {
     const shuffled = [...allChallenges].sort(() => 0.5 - Math.random());
     setChallengeSet(shuffled.slice(0, 3));
     setCurrentIndex(0);
@@ -115,13 +117,15 @@ export default function GamePage() {
     setProgress(0);
     setFeedback('');
     setInputValue('');
-  }, [step, allChallenges]);
+    setStep('challenge');
+  };
 
   const current = challengeSet[currentIndex];
 
   const handleSubmit = (answer?: string) => {
-    let isCorrect = false;
     if (!current) return;
+
+    let isCorrect = false;
 
     if (current.type === 'typing') {
       if (!inputValue.trim()) return; // Don't submit empty input
@@ -168,24 +172,28 @@ export default function GamePage() {
           transition: 'all 0.5s ease-in-out',
         }}
       >
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#ffeaa7' }}>
+        <h1
+          style={{
+            fontSize: '2.5rem',
+            marginBottom: '0.5rem',
+            color: '#ffeaa7',
+            userSelect: 'none',
+          }}
+        >
           ✨ Learn HTML by Playing!
         </h1>
         <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#d0e0ff' }}>
           This game is part of CodeQuest — a colorful way to learn web basics.
         </p>
+
         <div
           style={{
             height: '10px',
             background: '#fff3',
             borderRadius: '5px',
             marginBottom: '1rem',
+            overflow: 'hidden',
           }}
-          aria-label="progress bar"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progress}
         >
           <div
             style={{
@@ -193,7 +201,7 @@ export default function GamePage() {
               background: '#6c5ce7',
               height: '100%',
               borderRadius: '5px',
-              transition: 'width 0.5s',
+              transition: 'width 0.5s ease-in-out',
             }}
           />
         </div>
@@ -204,7 +212,7 @@ export default function GamePage() {
               Start learning HTML from scratch with easy challenges!
             </p>
             <button
-              onClick={() => setStep('challenge')}
+              onClick={startGame}
               style={{
                 marginTop: '1rem',
                 padding: '0.75rem 1.5rem',
@@ -215,8 +223,14 @@ export default function GamePage() {
                 cursor: 'pointer',
                 border: 'none',
                 transition: 'transform 0.3s',
+                userSelect: 'none',
               }}
-              type="button"
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = 'scale(1.05)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = 'scale(1)')
+              }
             >
               Start Game
             </button>
@@ -232,12 +246,26 @@ export default function GamePage() {
               maxWidth: '700px',
               margin: '0 auto',
               boxShadow: '0 0 15px rgba(0,0,0,0.3)',
+              userSelect: 'none',
+              animation: 'fadeIn 0.5s ease',
             }}
           >
-            <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#ffff88' }}>
+            <p
+              style={{
+                fontSize: '1.2rem',
+                marginBottom: '0.5rem',
+                color: '#ffff88',
+              }}
+            >
               {current.instruction}
             </p>
-            <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: '#84ffff' }}>
+            <p
+              style={{
+                fontSize: '0.95rem',
+                marginBottom: '1rem',
+                color: '#84ffff',
+              }}
+            >
               💡 Tip: {current.tip}
             </p>
 
@@ -257,8 +285,14 @@ export default function GamePage() {
                     fontFamily: 'monospace',
                     color: '#222',
                     backgroundColor: '#fff',
+                    userSelect: 'text',
+                    transition: 'box-shadow 0.3s ease',
                   }}
-                  aria-label="HTML code input"
+                  onFocus={(e) =>
+                    (e.currentTarget.style.boxShadow =
+                      '0 0 8px #6c5ce7aa')
+                  }
+                  onBlur={(e) => (e.currentTarget.style.boxShadow = 'none')}
                 />
                 <button
                   onClick={() => handleSubmit()}
@@ -266,13 +300,21 @@ export default function GamePage() {
                     marginTop: '1rem',
                     padding: '0.5rem 1.25rem',
                     borderRadius: '10px',
-                    background: 'linear-gradient(to right, #8e2de2, #f093fb)',
+                    background:
+                      'linear-gradient(to right, #8e2de2, #f093fb)',
                     color: 'white',
                     fontSize: '1rem',
                     cursor: 'pointer',
                     border: 'none',
+                    userSelect: 'none',
+                    transition: 'transform 0.3s ease',
                   }}
-                  type="button"
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = 'scale(1.05)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = 'scale(1)')
+                  }
                 >
                   Submit
                 </button>
@@ -297,8 +339,15 @@ export default function GamePage() {
                       fontSize: '1rem',
                       cursor: 'pointer',
                       border: 'none',
+                      userSelect: 'none',
+                      transition: 'background-color 0.3s ease',
                     }}
-                    type="button"
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = '#00b3ac')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = '#00cec9')
+                    }
                   >
                     {opt}
                   </button>
@@ -311,9 +360,8 @@ export default function GamePage() {
                 marginTop: '1rem',
                 fontWeight: 'bold',
                 color: '#ffb6c1',
-                minHeight: '1.5rem',
+                minHeight: '1.4rem',
               }}
-              aria-live="polite"
             >
               {feedback}
             </p>
@@ -327,23 +375,38 @@ export default function GamePage() {
               Your score: {score} / {challengeSet.length}
             </p>
             <button
-              onClick={() => setStep('intro')}
+              onClick={startGame}
               style={{
                 marginTop: '1rem',
                 padding: '0.75rem 1.5rem',
                 borderRadius: '10px',
-                background: 'linear-gradient(to right, #00cec9, #6c5ce7)',
+                background:
+                  'linear-gradient(to right, #00cec9, #6c5ce7)',
                 color: '#fff',
                 fontSize: '1rem',
                 cursor: 'pointer',
                 border: 'none',
+                userSelect: 'none',
+                transition: 'transform 0.3s',
               }}
-              type="button"
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = 'scale(1.05)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = 'scale(1)')
+              }
             >
               Play Again
             </button>
           </div>
         )}
+
+        <style>{`
+          @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+          }
+        `}</style>
       </div>
     </>
   );
